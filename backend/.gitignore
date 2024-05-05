@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs and Databases
+*.log
+*.sqlite3
+
+# Dependency directories
+lib/
+lib64/
+bin/
+include/

@@ -1,0 +1,40 @@
+# .NET Core / .NET 5+ build output
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.sln.docstates
+
+# NuGet packages
+*.nuget.props
+*.nuget.targets
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+AnyCPU/
+*.exe
+*.pdb
+*.dll
+*.zip
+*.vsix
+*.nupkg
+*.appx
+*.appxbundle
+*.appxupload
+*.appxsym
+*.msix
+*.msixbundle
+*.msixupload
+*.msi
+*.msm
+*.msp
+*.vcproj
+*.vcxproj
+*.vcxproj.*
+*.swp
