@@ -12,10 +12,10 @@ class SqlRepository(Generic[TModel]):
         self.db = db
 
     def get(self, id: int) -> Optional[TModel]:
-        return self.db.query(self.model).filter(self.model.id == id).first()
+        return self.db.query(TModel).filter(TModel.id == id).first()
 
     def create(self, item: TModel) -> TModel:
-        db_item = self.model(**item.model_dump())
+        db_item = TModel(**item.model_dump())
         self.db.add(db_item)
         self.db.commit()
         self.db.refresh(db_item)
@@ -40,24 +40,18 @@ class SqlRepository(Generic[TModel]):
         return None
 
     def list(self) -> list[TModel]:
-        return self.db.query(self.model).all()
+        return self.db.query(TModel).all()
 
     def count(self) -> int:
-        return self.db.query(self.model).count()
+        return self.db.query(TModel).count()
 
     def filter(self, **kwargs):
-        return self.db.query(self.model).filter_by(**kwargs).all()
+        return self.db.query(TModel).filter_by(**kwargs).all()
 
     def first(self, **kwargs) -> Optional[TModel]:
-        return self.db.query(self.model).filter_by(**kwargs).first()
+        return self.db.query(TModel).filter_by(**kwargs).first()
 
     def last(self, **kwargs) -> Optional[TModel]:
         return (
-            self.db.query(self.model)
-            .filter_by(**kwargs)
-            .order_by(self.model.id.desc())
-            .first()
+            self.db.query(TModel).filter_by(**kwargs).order_by(TModel.id.desc()).first()
         )
-
-    def exists(self, id: int) -> bool:
-        return self.db.query(self.model).filter(self.model.id == id).count() > 0
