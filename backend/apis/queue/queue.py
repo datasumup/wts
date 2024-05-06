@@ -16,4 +16,9 @@ def add_message(message: RequestQueueMessage, db: Session = DatabaseSession):
 
 @queue_router.get("/{taskId}")
 def list_queue_items_for_task(taskId: str, db: Session = DatabaseSession):
-    return db.query(RequestQueueMessage).filter_by(TaskId=taskId).all()
+    return (
+        db.query(RequestQueueMessage)
+        .filter_by(TaskId=taskId)
+        .order_by(RequestQueueMessage.CreatedOn.desc())
+        .all()
+    )
