@@ -10,7 +10,7 @@ public interface ITaskSchedulerService
 {
     IEnumerable<WindowsTaskModel> ListTasks(TaskFilter? filters = null);
     IEnumerable<WindowsTaskModel> SyncTasks(TaskFilter? filters = null);
-    void UpdateTaskSchedule(string id, string startTime, string interval);
+    void UpdateTaskSchedule(string id, RequestQueueMessagePayload payload);
     void ExecuteNow(string id);
 }
 
@@ -30,15 +30,16 @@ public class WindowsTaskSchedulerService : ITaskSchedulerService
 
         if (filters?.Paths != null)
         {
-            tasks = tasks.Where(t => filters.Paths.Contains(t.Path));
+            tasks = tasks.Where(t => filters.Paths.Any(x => x == t.Name));
         }
 
         return tasks.Select(t => new WindowsTaskModel
         {
-            Id = Convert.ToBase64String(Encoding.UTF8.GetBytes(t.Path)),
+            Id = Convert.ToBase64String(Encoding.UTF8.GetBytes(t.Name)),
             Name = t.Name,
-            Description = $" Path: {t.Path} | Description: {t.Definition.RegistrationInfo.Description}",
-            Trigger = t.Definition.Triggers.FirstOrDefault()?.ToString() ?? "None",
+            Description = t.Definition.RegistrationInfo.Description ?? "None",
+            // Join the triggers into a single string seperated by commas
+            Trigger = string.Join(", ", t.Definition.Triggers.Select(x => x.ToString())),
             Status = t.State.ToString()
         });
     }
@@ -60,23 +61,32 @@ public class WindowsTaskSchedulerService : ITaskSchedulerService
 
         return tasks;
     }
-    public void UpdateTaskSchedule(string id, string startTime, string interval)
+
+    public void UpdateTaskSchedule(string name, RequestQueueMessagePayload payload)
     {
         using WTS.TaskService taskService = new();
-        var task = taskService.GetTask(Encoding.UTF8.GetString(Convert.FromBase64String(id)));
-        task.Definition.Triggers.Clear();
+        var task = taskService.FindTask(name, true);
+        if (payload.RemoveExistingTriggers ?? false)
+        {
+            task.Definition.Triggers.Clear();
+        }
+        {
+            task.Definition.Triggers.Clear();
+        }
         task.Definition.Triggers.Add(new WTS.TimeTrigger
         {
-            StartBoundary = DateTime.Parse(startTime),
-            Repetition = new WTS.RepetitionPattern(TimeSpan.Parse(interval), TimeSpan.Zero),
+            StartBoundary = DateTime.Parse(payload.StartBoundary),
+            Repetition = new WTS.RepetitionPattern(TimeSpan.Parse(payload.Interval), TimeSpan.Zero),
             Enabled = true
         });
         task.RegisterChanges();
     }
+
     public void ExecuteNow(string id)
     {
+        var name = Encoding.UTF8.GetString(Convert.FromBase64String(id));
         using WTS.TaskService taskService = new();
-        var task = taskService.GetTask(Encoding.UTF8.GetString(Convert.FromBase64String(id)));
+        var task = taskService.FindTask(name, true);
         task.Run();
     }
 }

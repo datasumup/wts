@@ -25,6 +25,8 @@ public class Worker(
             }
             _taskSchedulerService.SyncTasks(_taskFilters);
             var pendingMessages = _requestQueueService.ListPendingMessages();
+
+
             foreach (var message in pendingMessages)
             {
                 _logger.LogInformation("Processing message: {message}", message.Id);
@@ -32,13 +34,14 @@ public class Worker(
                 {
                     _taskSchedulerService.ExecuteNow(message.TaskId);
                     message.Message = "Task executed Successfully";
+                    // epoch time should be same as javascript Date.now()
                     message.CompletedOn = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
                     _requestQueueService.UpdateMessage(message);
                 }
                 else if (message.Operation == "UpdateTaskSchedule")
                 {
-                    var payload = JsonSerializer.Deserialize<dynamic>(message.Payload);
-                    if (payload == null || payload?.startTime == null || payload?.interval == null)
+                    var payload = JsonSerializer.Deserialize<RequestQueueMessagePayload>(message.Payload);
+                    if (payload == null)
                     {
                         message.Message = "Invalid payload";
                         message.CompletedOn = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
@@ -46,7 +49,7 @@ public class Worker(
                         continue;
                     }
                     _logger.LogInformation("Updating task schedule for task: {taskId}", message.TaskId);
-                    _taskSchedulerService.UpdateTaskSchedule(message.TaskId, payload.startTime, payload.interval);
+                    _taskSchedulerService.UpdateTaskSchedule(message.Id, payload);
                     message.Message = "Task schedule updated Successfully";
                     message.CompletedOn = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
                     _requestQueueService.UpdateMessage(message);

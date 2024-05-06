@@ -8,14 +8,14 @@ export const Loader = ({ className, children }: LoaderProps) => {
   return (
     <div
       className={classNames(
-        "relative flex items-center justify-center",
+        "relative flex items-center justify-center mx-2",
         className
       )}
     >
       <div
         data-path
         className={
-          "rounded-full border-4 relative border-tertiary-200 flex items-center justify-center"
+          "rounded-full border-4 relative border-secondary-200 flex items-center justify-center"
         }
       >
         <div
@@ -27,7 +27,7 @@ export const Loader = ({ className, children }: LoaderProps) => {
       </div>
       <div
         data-spinning
-        className="peer h-full w-2 border-0 border-t-4 rounded-full border-tertiary-600 animate-spin absolute"
+        className="peer h-full w-2 border-0 border-t-4 rounded-full border-secondary-600 animate-spin absolute"
       ></div>
     </div>
   );

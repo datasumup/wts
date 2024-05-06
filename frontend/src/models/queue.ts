@@ -1,9 +1,9 @@
-export type RequestQueue = {
-  id: string;
-  taskId: string;
-  operation: string;
-  payload: string;
-  createdOn: number;
-  completedOn?: number;
-  message?: string;
+export type RequestQueueMessage = {
+  Id: string;
+  TaskId: string;
+  Operation: "ExecuteNow" | "UpdateTaskSchedule";
+  Payload: string;
+  CreatedOn: number;
+  CompletedOn: number | null;
+  Message: string | null;
 };

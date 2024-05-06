@@ -2,7 +2,7 @@ from sqlmodel import Field, SQLModel
 from typing import Optional
 
 
-class RequestQueue(SQLModel, table=True):
+class RequestQueueMessage(SQLModel, table=True):
 
     __tablename__ = "RequestQueue"
     __table_args__ = {"schema": "dbo"}

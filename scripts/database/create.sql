@@ -25,8 +25,8 @@ IF NOT EXISTS (
     [TaskId] NVARCHAR(400) NOT NULL,
     [Operation] NVARCHAR(MAX) NOT NULL,
     [Payload] NVARCHAR(max) NOT NULL,
-    [CreatedOn] [int] NOT NULL,
-    [CompletedOn] [int] NULL,
+    [CreatedOn] [bigint] NOT NULL,
+    [CompletedOn] [bigint] NULL,
     [Message] NVARCHAR(max) NULL,
     CONSTRAINT [PK_RequestQueue] PRIMARY KEY CLUSTERED ([Id] ASC) WITH (
         STATISTICS_NORECOMPUTE = OFF,
