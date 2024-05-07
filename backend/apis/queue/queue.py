@@ -2,16 +2,18 @@ from fastapi import APIRouter
 from sqlalchemy.orm import Session
 from libs.db.base.sqlalchemy import DatabaseSession
 from models import RequestQueueMessage
-from datetime import datetime
 
 queue_router = APIRouter(prefix="/queue", tags=["queue", "request"])
 
 
-@queue_router.post("/")
+@queue_router.post("/", response_model=bool)
 def add_message(message: RequestQueueMessage, db: Session = DatabaseSession):
-    db.add(message)
-    db.commit()
-    return True
+    try:
+        db.add(message)
+        db.commit()
+        return True
+    except Exception as e:
+        return False
 
 
 @queue_router.get("/{taskId}")

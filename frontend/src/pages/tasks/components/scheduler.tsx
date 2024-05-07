@@ -1,45 +1,33 @@
+import { TaskTrigger } from "@@models";
 import classNames from "classnames";
+import { TriangleAlertIcon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export type TaskSchedulerProps = {
   className?: string;
+  addTrigger: (trigger: TaskTrigger) => Promise<any>;
 };
-export const TaskScheduler = ({ className }: TaskSchedulerProps) => {
-  const [triggerType, setTriggerType] = useState("");
-  const [schedule, setSchedule] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [recurrence, setRecurrence] = useState("");
+export const TaskScheduler = ({
+  addTrigger,
+  className,
+}: TaskSchedulerProps) => {
+  const [trigger, setTrigger] = useState<Partial<TaskTrigger>>({});
 
-  const handleTriggerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setTriggerType(e.target.value);
-  };
-
-  const handleScheduleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSchedule(e.target.value);
-  };
-
-  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStartTime(e.target.value);
-  };
-
-  const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEndTime(e.target.value);
-  };
-
-  const handleRecurrenceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRecurrence(e.target.value);
+  const updateTriggerValues = (
+    key: keyof TaskTrigger,
+    value: string | number | boolean
+  ) => {
+    setTrigger((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!triggerType || !schedule || !startTime || !endTime || !recurrence) {
-      alert("Please fill in all fields");
-      return;
-    }
-    alert(
-      `Trigger Type: ${triggerType}, Schedule: ${schedule}, Start Time: ${startTime}, End Time: ${endTime}, Recurrence: ${recurrence}`
-    );
+    console.log(trigger);
+    addTrigger(trigger as TaskTrigger).then(() => {
+      setTrigger({});
+      toast.success("Trigger added successfully");
+    });
   };
 
   return (
@@ -49,47 +37,11 @@ export const TaskScheduler = ({ className }: TaskSchedulerProps) => {
     >
       <div>
         <label className="block">
-          Trigger Type:
-          <select
-            value={triggerType}
-            onChange={handleTriggerChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-md p-1 text-black bg-white hover:bg-gray-100"
-          >
-            <option
-              className="bg-primary-400 p-1 hover:bg-primary-600 hover:text-white"
-              value=""
-            >
-              Select...
-            </option>
-            <option
-              className="bg-primary-400 p-1 hover:bg-primary-600 hover:text-white"
-              value="daily"
-            >
-              Daily
-            </option>
-            <option
-              className="bg-primary-400 p-1 hover:bg-primary-600 hover:text-white"
-              value="weekly"
-            >
-              Weekly
-            </option>
-            <option
-              className="bg-primary-400 p-1 hover:bg-primary-600 hover:text-white"
-              value="monthly"
-            >
-              Monthly
-            </option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label className="block">
-          Schedule:
+          Start Date:
           <input
-            type="text"
-            value={schedule}
-            onChange={handleScheduleChange}
-            placeholder="Enter schedule..."
+            type="date"
+            value={trigger.StartDate}
+            onChange={(e) => updateTriggerValues("StartDate", e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-1 text-black bg-white hover:bg-gray-100"
           />
         </label>
@@ -99,35 +51,90 @@ export const TaskScheduler = ({ className }: TaskSchedulerProps) => {
           Start Time:
           <input
             type="time"
-            value={startTime}
-            onChange={handleStartTimeChange}
+            value={trigger.StartTime}
+            onChange={(e) => updateTriggerValues("StartTime", e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-1 text-black bg-white hover:bg-gray-100"
           />
         </label>
       </div>
-      <div>
-        <label className="block">
-          End Time:
-          <input
-            type="time"
-            value={endTime}
-            onChange={handleEndTimeChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-1 text-black bg-white hover:bg-gray-100"
-          />
-        </label>
+      {trigger.RunOnce ? null : (
+        <div>
+          <label className="block">
+            Interval (HH:MM:SS):
+            <div className="flex justify-start items-center space-x-1">
+              <input
+                type="number"
+                min={0}
+                max={23}
+                value={trigger.IntervalHours}
+                onChange={(e) =>
+                  updateTriggerValues("IntervalHours", parseInt(e.target.value))
+                }
+                placeholder="HH"
+                className="mt-1 block w-1/5 rounded-md border-gray-300 shadow-sm p-1 text-black bg-white hover:bg-gray-100"
+              />
+              <span>:</span>
+              <input
+                type="number"
+                value={trigger.IntervalMinutes}
+                min={0}
+                max={59}
+                onChange={(e) =>
+                  updateTriggerValues(
+                    "IntervalMinutes",
+                    parseInt(e.target.value)
+                  )
+                }
+                placeholder="MM"
+                className="mt-1 block w-1/5 rounded-md border-gray-300 shadow-sm p-1 text-black bg-white hover:bg-gray-100"
+              />
+              <span>:</span>
+              <input
+                type="number"
+                value={trigger.IntervalSeconds}
+                min={0}
+                max={59}
+                onChange={(e) =>
+                  updateTriggerValues(
+                    "IntervalSeconds",
+                    parseInt(e.target.value)
+                  )
+                }
+                placeholder="SS"
+                className="mt-1 block w-1/5 rounded-md border-gray-300 shadow-sm p-1 text-black bg-white hover:bg-gray-100"
+              />
+            </div>
+          </label>
+        </div>
+      )}
+      <div className="flex items-center justify-start space-x-1">
+        <input
+          type="checkbox"
+          onChange={(e) => updateTriggerValues("RunOnce", e.target.checked)}
+          className="mt-1 h-5 w-5 rounded"
+          checked={trigger.RunOnce}
+        />
+        <label className="block">Run Once</label>
       </div>
-      <div>
-        <label className="block">
-          Recurrence:
-          <input
-            type="number"
-            value={recurrence}
-            onChange={handleRecurrenceChange}
-            placeholder="Enter recurrence..."
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-1 text-black bg-white hover:bg-gray-100"
-          />
-        </label>
+      <div className="flex items-center justify-start space-x-1">
+        <input
+          type="checkbox"
+          checked={trigger.RemoveExistingTriggers}
+          onChange={(e) =>
+            updateTriggerValues("RemoveExistingTriggers", e.target.checked)
+          }
+          className="mt-1 h-5 w-5 rounded"
+        />
+        <label className="block">Clear Existing Triggers</label>
       </div>
+      {trigger.RemoveExistingTriggers ? (
+        <div className="bg-orange-200 border-orange-700 border text-red-900 p-1 rounded flex items-center space-x-1">
+          <TriangleAlertIcon className="h-4 w-4" />{" "}
+          <span className="text-sm">
+            All the existing triggers will be removed.
+          </span>
+        </div>
+      ) : null}
       <div>
         <input
           type="submit"

@@ -39,7 +39,7 @@ public class WindowsTaskSchedulerService : ITaskSchedulerService
             Name = t.Name,
             Description = t.Definition.RegistrationInfo.Description ?? "None",
             // Join the triggers into a single string seperated by commas
-            Trigger = string.Join(", ", t.Definition.Triggers.Select(x => x.ToString())),
+            Trigger = string.Join("-:::-", t.Definition.Triggers.Select(x => x.ToString())),
             Status = t.State.ToString()
         });
     }
@@ -62,23 +62,33 @@ public class WindowsTaskSchedulerService : ITaskSchedulerService
         return tasks;
     }
 
-    public void UpdateTaskSchedule(string name, RequestQueueMessagePayload payload)
+    public void UpdateTaskSchedule(string id, RequestQueueMessagePayload payload)
     {
+        var name = Encoding.UTF8.GetString(Convert.FromBase64String(id));
         using WTS.TaskService taskService = new();
         var task = taskService.FindTask(name, true);
         if (payload.RemoveExistingTriggers ?? false)
         {
             task.Definition.Triggers.Clear();
         }
+        if (payload.RunOnce ?? false)
         {
-            task.Definition.Triggers.Clear();
+            task.Definition.Triggers.Add(new WTS.TimeTrigger
+            {
+                StartBoundary = DateTime.Parse($"{payload.StartDate} {payload.StartTime}"),
+                Enabled = true
+            });
         }
-        task.Definition.Triggers.Add(new WTS.TimeTrigger
+        else
         {
-            StartBoundary = DateTime.Parse(payload.StartBoundary),
-            Repetition = new WTS.RepetitionPattern(TimeSpan.Parse(payload.Interval), TimeSpan.Zero),
-            Enabled = true
-        });
+            task.Definition.Triggers.Add(new WTS.TimeTrigger
+            {
+                StartBoundary = DateTime.Parse($"{payload.StartDate} {payload.StartTime}"),
+                Repetition = new WTS.RepetitionPattern(TimeSpan.FromHours(payload.IntervalHours ?? 0) + TimeSpan.FromMinutes(payload.IntervalMinutes ?? 0) + TimeSpan.FromSeconds(payload.IntervalSeconds ?? 0), TimeSpan.Zero),
+                Enabled = true,
+            });
+        }
+
         task.RegisterChanges();
     }
 

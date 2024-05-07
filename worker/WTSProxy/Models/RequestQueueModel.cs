@@ -19,9 +19,12 @@ public class RequestQueueMessage
 
 public class RequestQueueMessagePayload
 {
-    public string? StartBoundary { get; set; }
-    public string? Repetition { get; set; }
-    public string? Interval { get; set; }
-    public WTS.TaskTriggerType? TriggerType { get; set; }
+    // public string Name { get; set; }
+    public string StartDate { get; set; }
+    public string StartTime { get; set; }
+    public int? IntervalHours { get; set; }
+    public int? IntervalMinutes { get; set; }
+    public int? IntervalSeconds { get; set; }
     public bool? RemoveExistingTriggers { get; set; }
+    public bool? RunOnce { get; set; }
 }

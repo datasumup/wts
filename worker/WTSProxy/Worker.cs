@@ -38,7 +38,7 @@ public class Worker(
                     message.CompletedOn = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
                     _requestQueueService.UpdateMessage(message);
                 }
-                else if (message.Operation == "UpdateTaskSchedule")
+                else if (message.Operation == "Schedule")
                 {
                     var payload = JsonSerializer.Deserialize<RequestQueueMessagePayload>(message.Payload);
                     if (payload == null)
@@ -49,7 +49,7 @@ public class Worker(
                         continue;
                     }
                     _logger.LogInformation("Updating task schedule for task: {taskId}", message.TaskId);
-                    _taskSchedulerService.UpdateTaskSchedule(message.Id, payload);
+                    _taskSchedulerService.UpdateTaskSchedule(message.TaskId, payload);
                     message.Message = "Task schedule updated Successfully";
                     message.CompletedOn = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
                     _requestQueueService.UpdateMessage(message);

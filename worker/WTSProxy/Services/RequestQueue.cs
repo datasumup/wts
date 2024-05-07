@@ -23,7 +23,7 @@ public class RequestQueueService : IRequestQueueService
 
     public IEnumerable<RequestQueueMessage> ListPendingMessages()
     {
-        return requestQueueRepository.Query("SELECT * FROM RequestQueue WHERE CompletedOn IS NULL");
+        return requestQueueRepository.Query("SELECT * FROM RequestQueue WHERE CompletedOn IS NULL ORDER BY CreatedOn ASC");
     }
 
     public RequestQueueMessage GetMessage(string id)

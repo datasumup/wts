@@ -1,9 +1,9 @@
 import { Dialog } from "@@elements/dialog";
-import { WindowsTask } from "@@models";
+import { TaskTrigger, WindowsTask } from "@@models";
 import classNames from "classnames";
 import { Clock10Icon, HistoryIcon, PlayIcon } from "lucide-react";
 import { TaskScheduler } from "./scheduler";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Loader } from "@@elements/loader";
 import { addMessageToQueueAsync, useQueueItemsById } from "@@services/queue";
 import { v4 as uuidv4 } from "uuid";
@@ -15,6 +15,7 @@ export type TaskProps = {
 export const Task = ({ task, className }: TaskProps) => {
   const [wip, setWip] = useState(false);
   const [queueItems] = useQueueItemsById(task.Id);
+  const scheduleCloseRef = useRef<HTMLButtonElement>(null);
 
   const runNow = () => {
     setWip(true);
@@ -28,6 +29,22 @@ export const Task = ({ task, className }: TaskProps) => {
       Message: null,
     }).finally(() => setWip(false));
   };
+
+  const setTriggerAsync = (trigger: TaskTrigger) => {
+    setWip(true);
+    return addMessageToQueueAsync({
+      TaskId: task.Id,
+      Operation: "Schedule",
+      Payload: JSON.stringify(trigger),
+      CreatedOn: Date.now(),
+      Id: uuidv4(),
+      CompletedOn: null,
+      Message: null,
+    })
+      .then(() => scheduleCloseRef.current?.click())
+      .finally(() => setWip(false));
+  };
+
   return (
     <div
       className={classNames(
@@ -42,7 +59,11 @@ export const Task = ({ task, className }: TaskProps) => {
       <div className="bg-slate-800 text-white p-2 rounded">
         {task.Description}
       </div>
-      <div className="text-white">{task.Trigger?.split(",")?.join("\n")}</div>
+      <div className="text-white">
+        {task.Trigger?.split("-:::-")?.map((text, index) => {
+          return <div key={index}>{text}</div>;
+        })}
+      </div>
       <div className="flex justify-end space-x-2">
         {wip ? <Loader /> : null}{" "}
         <Dialog
@@ -66,7 +87,10 @@ export const Task = ({ task, className }: TaskProps) => {
             </thead>
             <tbody>
               {queueItems.map((item) => (
-                <tr key={item.Id} className="p-2 bg-slate-800 rounded my-1">
+                <tr
+                  key={item.Id}
+                  className={classNames("p-2 bg-slate-800 rounded my-1", {})}
+                >
                   <td className="text-left px-1">{item.Operation}</td>
                   <td className="text-left px-1">
                     {new Date(item.CreatedOn).toLocaleString()}
@@ -83,6 +107,7 @@ export const Task = ({ task, className }: TaskProps) => {
           </table>
         </Dialog>
         <Dialog
+          closeButtonRef={scheduleCloseRef}
           trigger={
             <button
               className="bg-orange-600 text-white h-8 space-x-2 px-2 rounded flex justify-center items-center disabled:bg-orange-400 disabled:cursor-not-allowed"
@@ -92,7 +117,7 @@ export const Task = ({ task, className }: TaskProps) => {
             </button>
           }
         >
-          <TaskScheduler className="min-w-72" />
+          <TaskScheduler addTrigger={setTriggerAsync} className="min-w-72" />
         </Dialog>
         <button
           className="bg-green-500 text-white h-8 space-x-2 px-2 rounded flex justify-center items-center disabled:bg-green-400 disabled:cursor-not-allowed"

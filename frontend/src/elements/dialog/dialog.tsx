@@ -5,8 +5,9 @@ export type DialogProps = {
   trigger: React.ReactNode;
   className?: string;
   children?: React.ReactNode;
+  closeButtonRef?: React.RefObject<HTMLButtonElement>;
 };
-export const Dialog = ({ trigger, children }: DialogProps) => {
+export const Dialog = ({ closeButtonRef, trigger, children }: DialogProps) => {
   return (
     <RadixDialog.Root>
       <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger>
@@ -18,6 +19,7 @@ export const Dialog = ({ trigger, children }: DialogProps) => {
             <button
               className="text-violet11 hover:bg-violet4 focus:shadow-violet7 absolute top-[10px] right-[10px] inline-flex mb-4 h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
               aria-label="Close"
+              ref={closeButtonRef}
             >
               <X />
             </button>
