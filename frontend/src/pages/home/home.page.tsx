@@ -16,9 +16,7 @@ export const HomePage: React.FC = ({}: HomePageProps) => {
           className="flex flex-col bg-slate-900 w-full p-4 max-w-2xl mt-4 rounded-lg shadow-md space-y-2"
           key={task.Id}
         >
-          <div className="text-secondary-300 font-bold text-xl">
-            {task.Name}
-          </div>
+          <div className="text-green-300 font-bold text-xl">{task.Name}</div>
           <div className="bg-blue-900 text-blue-300 w-fit px-4 py-1 rounded">
             {task.Status}
           </div>

@@ -15,7 +15,7 @@ export const Loader = ({ className, children }: LoaderProps) => {
       <div
         data-path
         className={
-          "rounded-full border-4 relative border-secondary-200 flex items-center justify-center"
+          "rounded-full border-4 relative border-green-200 flex items-center justify-center"
         }
       >
         <div
@@ -27,7 +27,7 @@ export const Loader = ({ className, children }: LoaderProps) => {
       </div>
       <div
         data-spinning
-        className="peer h-full w-2 border-0 border-t-4 rounded-full border-secondary-600 animate-spin absolute"
+        className="peer h-full w-2 border-0 border-t-4 rounded-full border-green-600 animate-spin absolute"
       ></div>
     </div>
   );

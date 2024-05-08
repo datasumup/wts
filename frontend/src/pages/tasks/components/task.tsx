@@ -52,7 +52,7 @@ export const Task = ({ task, className }: TaskProps) => {
         className
       )}
     >
-      <div className="text-secondary-300 font-bold text-xl">{task.Name}</div>
+      <div className="text-green-300 font-bold text-xl">{task.Name}</div>
       <div className="bg-blue-900 text-blue-300 w-fit px-4 py-1 rounded">
         {task.Status}
       </div>
@@ -78,7 +78,7 @@ export const Task = ({ task, className }: TaskProps) => {
         >
           <table>
             <thead>
-              <tr className="rounded my-1 bg-secondary-600">
+              <tr className="rounded my-1 bg-green-600">
                 <th className="text-left px-1">Operation</th>
                 <th className="text-left px-1">Created On</th>
                 <th className="text-left px-1">Completed On</th>
