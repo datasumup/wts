@@ -78,7 +78,7 @@ export const Task = ({ task, className }: TaskProps) => {
         >
           <table>
             <thead>
-              <tr className="rounded my-1 bg-green-600">
+              <tr className="rounded my-1 bg-green-600 text-white">
                 <th className="text-left px-1">Operation</th>
                 <th className="text-left px-1">Created On</th>
                 <th className="text-left px-1">Completed On</th>
@@ -89,7 +89,10 @@ export const Task = ({ task, className }: TaskProps) => {
               {queueItems.map((item) => (
                 <tr
                   key={item.Id}
-                  className={classNames("p-2 bg-slate-800 rounded my-1", {})}
+                  className={classNames(
+                    "p-2 bg-slate-800 rounded my-1 text-white",
+                    {}
+                  )}
                 >
                   <td className="text-left px-1">{item.Operation}</td>
                   <td className="text-left px-1">
