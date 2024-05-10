@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from apis import task_router, queue_router
+from apis import task_router, queue_router, parking_router
 
 app = FastAPI()
 
@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-api_routes = [task_router, queue_router]
+api_routes = [task_router, queue_router, parking_router]
 
 for route in api_routes:
     app.include_router(route, prefix="/api")

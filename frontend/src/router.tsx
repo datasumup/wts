@@ -3,6 +3,7 @@ import { EmptyLayout } from "@@layouts/empty";
 import { ErrorPage } from "@@pages/error";
 import { lazy } from "react";
 import { LazyWrapper } from "@@elements/lazy";
+import { HomePage } from "@@pages/home";
 
 export type Breadcrumb = {
   title: string;
@@ -10,6 +11,7 @@ export type Breadcrumb = {
 };
 
 const TasksPageLazy = lazy(() => import("./pages/tasks/tasks.page"));
+const ParkingPageLazy = lazy(() => import("./pages/parking/parking.page"));
 
 const router = createBrowserRouter([
   {
@@ -22,14 +24,28 @@ const router = createBrowserRouter([
     children: [
       {
         path: "home",
-        element: <LazyWrapper children={<TasksPageLazy />} />,
+        element: <LazyWrapper children={<HomePage />} />,
         handle: {
           crumb: () => "home",
         },
       },
       {
+        path: "tasks",
+        element: <LazyWrapper children={<TasksPageLazy />} />,
+        handle: {
+          crumb: () => "tasks",
+        },
+      },
+      {
+        path: "parking",
+        element: <LazyWrapper children={<ParkingPageLazy />} />,
+        handle: {
+          crumb: () => "parking",
+        },
+      },
+      {
         path: "",
-        Component: TasksPageLazy,
+        Component: HomePage,
         handle: {},
       },
     ],
