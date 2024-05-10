@@ -1,0 +1,67 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  - name: DATABASE_URL
+    value: $(databaseUrl)
+  - name: azureServiceConnectionId
+    value: $(azureServiceConnectionId)
+  - name: webAppName
+    value: $(webAppName)
+  - name: pythonVersion
+    value: "3.12"
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "20.x"
+    displayName: "Install Node.js"
+
+  - script: |
+      cd frontend
+      npm install
+      npm run build
+    displayName: "Build React App"
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: "$(pythonVersion)"
+      displayName: "Use Python $(pythonVersion)"
+
+  - script: |
+      python -m venv antenv
+      source antenv/bin/activate
+      python -m pip install --upgrade pip
+      pip install setup
+      pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
+    workingDirectory: $(System.DefaultWorkingDirectory)/backend
+    displayName: "Install requirements"
+
+  - task: ArchiveFiles@2
+    displayName: "Archive files"
+    inputs:
+      rootFolderOrFile: "$(projectRoot)"
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      replaceExistingArchive: true
+
+  - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    displayName: "Upload package"
+    artifact: drop
+
+  - task: AzureWebApp@1
+    displayName: "Deploy Azure Web App : $(webAppName)"
+    inputs:
+      azureSubscription: $(azureServiceConnectionId)
+      appType: "webAppLinux"
+      appName: $(webAppName)
+      package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+      startUpCommand: "python main.py"
+      appSettings: |
+        -DATABASE_URL $(databaseUrl)
