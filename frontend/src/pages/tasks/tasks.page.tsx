@@ -11,7 +11,7 @@ export const HomePage: React.FC = ({}: TasksPageProps) => {
 
   return (
     <div className="h-full w-full flex flex-col items-center p-2">
-      <div className="w-1/3">
+      <div className="w-full lg:w-1/2 2xl:w-1/3 ">
         <div className="w-72">
           <NavLink
             to={"/home"}
