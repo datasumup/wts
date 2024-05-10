@@ -1,7 +1,7 @@
 # .NET Core / .NET 5+ build output
 bin/
 obj/
-
+publish/
 # Visual Studio files
 .vs/
 *.suo
