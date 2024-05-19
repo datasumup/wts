@@ -4,11 +4,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
-
-from apis import task_router, queue_router, parking_router
+from apis import task_router, queue_router, parking_router, user_router
+from middlewares.auth.aad import use_aad_auth
+import os
 
 app = FastAPI()
-
+if os.getenv("AUTH_DISABLED") != "true":
+    use_aad_auth(app, {})
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,7 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-api_routes = [task_router, queue_router, parking_router]
+
+api_routes = [task_router, queue_router, parking_router, user_router]
 
 for route in api_routes:
     app.include_router(route, prefix="/api")

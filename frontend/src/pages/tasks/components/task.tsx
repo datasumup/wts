@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import { Loader } from "@@elements/loader";
 import { addMessageToQueueAsync, useQueueItemsById } from "@@services/queue";
 import { v4 as uuidv4 } from "uuid";
+import { SecureAccess } from "@@elements/secure";
 
 export type TaskProps = {
   className?: string;
@@ -86,7 +87,7 @@ export const Task = ({ task, className }: TaskProps) => {
               </tr>
             </thead>
             <tbody>
-              {queueItems.map((item) => (
+              {queueItems?.map((item) => (
                 <tr
                   key={item.Id}
                   className={classNames(
@@ -109,25 +110,27 @@ export const Task = ({ task, className }: TaskProps) => {
             </tbody>
           </table>
         </Dialog>
-        <Dialog
-          closeButtonRef={scheduleCloseRef}
-          trigger={
-            <button
-              className="bg-orange-600 text-white h-8 space-x-2 px-2 rounded flex justify-center items-center disabled:bg-orange-400 disabled:cursor-not-allowed"
-              disabled={wip}
-            >
-              <Clock10Icon className="h-4 w-4" /> Schedule
-            </button>
-          }
-        >
-          <TaskScheduler addTrigger={setTriggerAsync} className="min-w-72" />
-        </Dialog>
+        <SecureAccess roles={["CCAA.Custom.Owner"]}>
+          <Dialog
+            closeButtonRef={scheduleCloseRef}
+            trigger={
+              <button
+                className="bg-orange-600 text-white h-8 space-x-2 px-2 rounded flex justify-center items-center disabled:bg-orange-400 disabled:cursor-not-allowed"
+                disabled={wip}
+              >
+                <Clock10Icon className="h-4 w-4" /> Schedule
+              </button>
+            }
+          >
+            <TaskScheduler addTrigger={setTriggerAsync} className="min-w-72" />
+          </Dialog>
+        </SecureAccess>
         <button
           className="bg-green-500 text-white h-8 space-x-2 px-2 rounded flex justify-center items-center disabled:bg-green-400 disabled:cursor-not-allowed"
           disabled={wip}
           onClick={runNow}
         >
-          <PlayIcon className="h-4-w-4" /> Run Now
+          <PlayIcon className="h-4 w-4" /> Run Now
         </button>
       </div>
     </div>

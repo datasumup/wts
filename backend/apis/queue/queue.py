@@ -2,12 +2,17 @@ from fastapi import APIRouter
 from sqlalchemy.orm import Session
 from libs.db.base.sqlalchemy import DatabaseSession
 from models import RequestQueueMessage
+from libs.auth.authz import authorize
 
-queue_router = APIRouter(prefix="/queue", tags=["queue", "request"])
+queue_router = APIRouter(prefix="/queue", tags=["queue"])
 
 
 @queue_router.post("/", response_model=bool)
-def add_message(message: RequestQueueMessage, db: Session = DatabaseSession):
+def add_message(
+    message: RequestQueueMessage,
+    db: Session = DatabaseSession,
+    authorized: bool = authorize(["CCAA.Custom.Owner", "CCAA.Custom.Job.Restart"]),
+):
     try:
         db.add(message)
         db.commit()

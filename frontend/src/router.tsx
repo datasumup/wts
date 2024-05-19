@@ -4,6 +4,7 @@ import { ErrorPage } from "@@pages/error";
 import { lazy } from "react";
 import { LazyWrapper } from "@@elements/lazy";
 import { HomePage } from "@@pages/home";
+import { LogoutPage } from "@@pages/auth";
 
 export type Breadcrumb = {
   title: string;
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
         handle: {},
       },
     ],
+  },
+  {
+    path: "auth/logout",
+    Component: LogoutPage,
   },
 ]);
 

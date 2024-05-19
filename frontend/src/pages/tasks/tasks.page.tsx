@@ -24,7 +24,7 @@ export const HomePage: React.FC = ({}: TasksPageProps) => {
           <CircleCheckBigIcon className="h-7 w-7 mr-2" /> Windows Task
           Management
         </div>
-        {tasks.map((task) => (
+        {tasks?.map((task) => (
           <Task task={task} key={task.Id} />
         ))}
       </div>

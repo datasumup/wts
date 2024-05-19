@@ -3,6 +3,7 @@ import * as Switch from "@radix-ui/react-switch";
 import { HomeIcon, ParkingCircleIcon } from "lucide-react";
 import { updateParkingAvailabilityAsync } from "@@services/parking";
 import { NavLink } from "react-router-dom";
+import { SecureAccess } from "@@elements/secure";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type ParkingPageProps = {};
@@ -47,27 +48,31 @@ export const ParkingPage: React.FC = ({}: ParkingPageProps) => {
           <div className="border p-1">{valetCounter?.MediumThreshold}</div>
           <div className="border p-1">HighThreshold</div>{" "}
           <div className="border p-1">{valetCounter?.HighThreshold}</div>
-          <div className="flex items-center justify-start col-span-2 mt-4 ">
-            <label
-              className="text-white text-[15px] leading-none pr-[15px] text-xl font-semibold"
-              htmlFor="valet-availability"
-            >
-              Available
-            </label>
-            <Switch.Root
-              className="w-[42px] h-[25px] bg-blackA6 rounded-full relative shadow-[0_2px_10px] shadow-black focus:shadow-[0_0_0_2px] focus:shadow-black bg-red-500 data-[state=checked]:bg-green-500 outline-none cursor-default"
-              id="valet-availability"
-              style={{ WebkitTapHighlightColor: "rgba(0, 0, 0, 0)" }}
-              defaultChecked={valetCounter?.CounterValue === 1}
-              onCheckedChange={(checked) => {
-                updateParkingAvailabilityAsync(checked).then(() => {
-                  valetCounterQuery.refetch();
-                });
-              }}
-            >
-              <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full shadow-[0_2px_2px] shadow-blackA4 transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
-            </Switch.Root>
-          </div>
+          <SecureAccess
+            roles={["CCAA.Custom.Owner", "CCAA.Custom.ValetParking.Manger"]}
+          >
+            <div className="flex items-center justify-start col-span-2 mt-4 ">
+              <label
+                className="text-white text-[15px] leading-none pr-[15px] text-xl font-semibold"
+                htmlFor="valet-availability"
+              >
+                Available
+              </label>
+              <Switch.Root
+                className="w-[42px] h-[25px] bg-blackA6 rounded-full relative shadow-[0_2px_10px] shadow-black focus:shadow-[0_0_0_2px] focus:shadow-black bg-red-500 data-[state=checked]:bg-green-500 outline-none cursor-default"
+                id="valet-availability"
+                style={{ WebkitTapHighlightColor: "rgba(0, 0, 0, 0)" }}
+                defaultChecked={valetCounter?.CounterValue === 1}
+                onCheckedChange={(checked) => {
+                  updateParkingAvailabilityAsync(checked).then(() => {
+                    valetCounterQuery.refetch();
+                  });
+                }}
+              >
+                <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full shadow-[0_2px_2px] shadow-blackA4 transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
+              </Switch.Root>
+            </div>
+          </SecureAccess>
         </div>
       )}
     </div>
