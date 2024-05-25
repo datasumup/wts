@@ -13,6 +13,7 @@ export type Breadcrumb = {
 
 const TasksPageLazy = lazy(() => import("./pages/tasks/tasks.page"));
 const ParkingPageLazy = lazy(() => import("./pages/parking/parking.page"));
+const CounterPageLazy = lazy(() => import("./pages/counter/counter.page"));
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,13 @@ const router = createBrowserRouter([
         element: <LazyWrapper children={<ParkingPageLazy />} />,
         handle: {
           crumb: () => "parking",
+        },
+      },
+      {
+        path: "counter",
+        element: <LazyWrapper children={<CounterPageLazy />} />,
+        handle: {
+          crumb: () => "counter",
         },
       },
       {

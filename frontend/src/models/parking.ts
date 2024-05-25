@@ -9,3 +9,15 @@ export type ValetCounter = {
   MediumThreshold?: number;
   HighThreshold?: number;
 };
+
+export type ManualUpdateCounter = {
+  CounterId: number;
+  CounterName: string | null;
+  GroupName: string | null;
+  CounterValue: number;
+  CounterMaximum: number;
+  DisplayThreshold: number | null;
+  MediumThreshold: number | null;
+  HighThreshold: number | null;
+  validTill: Date;
+};

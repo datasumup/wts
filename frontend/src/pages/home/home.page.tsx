@@ -1,5 +1,9 @@
 import { SecureAccess } from "@@elements/secure";
-import { CircleCheckBigIcon, ParkingCircleIcon } from "lucide-react";
+import {
+  CircleCheckBigIcon,
+  ParkingCircleIcon,
+  Grid2x2Check,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -18,6 +22,17 @@ export const HomePage: React.FC = ({}: HomePageProps) => {
           >
             <ParkingCircleIcon className="h-24 w-24  mx-auto" />
             <span className="text-center text-2xl">Valet Parking</span>
+          </NavLink>
+        </SecureAccess>
+        <SecureAccess
+          roles={["CCAA.Custom.Owner", "CCAA.Custom.ValetParking.Manger"]}
+        >
+          <NavLink
+            to={"/counter"}
+            className="h-64 w-64 bg-slate-900 flex flex-col items-center justify-center rounded-md shadow-black text-white hover:text-green-500 cursor-pointer "
+          >
+            <Grid2x2Check className="h-24 w-24  mx-auto" />
+            <span className="text-center text-2xl">Counter</span>
           </NavLink>
         </SecureAccess>
         <SecureAccess roles={["CCAA.Custom.Owner", "CCAA.Custom.Job.Restart"]}>

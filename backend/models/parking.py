@@ -1,5 +1,6 @@
 from sqlmodel import Field, SQLModel
 from typing import Optional
+from datetime import datetime
 
 
 class ValetCounter(SQLModel, table=True):
@@ -16,3 +17,19 @@ class ValetCounter(SQLModel, table=True):
     DisplayThreshold: Optional[int] = None
     MediumThreshold: Optional[int] = None
     HighThreshold: Optional[int] = None
+
+
+class ManualUpdateCounter(SQLModel, table=True):
+
+    __tablename__ = "CounterTable_Manual_update"
+    __table_args__ = {"schema": "dbo"}
+
+    CounterId: int = Field(primary_key=True)
+    CounterName: Optional[str] = None
+    GroupName: Optional[str] = None
+    CounterValue: int
+    CounterMaximum: int
+    DisplayThreshold: Optional[int] = None
+    MediumThreshold: Optional[int] = None
+    HighThreshold: Optional[int] = None
+    validTill: datetime
