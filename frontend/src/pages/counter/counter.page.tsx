@@ -16,6 +16,7 @@ import { ManualUpdateCounter } from "@@models";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import classNames from "classnames";
+import { SecureAccess } from "@@elements/secure";
 
 type Updatable<T> = {
   _original: T;
@@ -227,29 +228,33 @@ export const CounterPage: React.FC = ({}: CounterPageProps) => {
                 ))}
               </tbody>
             </table>
-            <div className="flex justify-end mt-4">
-              <button
-                className="bg-green-500 text-white p-2 rounded disabled:bg-slate-500"
-                onClick={() => {
-                  updateManualUpdateCountersAsync(
-                    countersUpdatable
-                      .filter((x) => x.dirty)
-                      .map((u) => ({
-                        ...u.current,
-                        validTill: parseDateTimeLocal(u.current.validTill),
-                      }))
-                  ).then(() => {
-                    setIsDirty(false);
-                    toast.success("Counters updated successfully");
-                    setCountersUpdatable([]);
-                    manualUpdateCountersQuery.refetch();
-                  });
-                }}
-                disabled={!isDirty}
-              >
-                Update
-              </button>
-            </div>
+            <SecureAccess
+              roles={["CCAA.Custom.Owner", "CCAA.Custom.ValetParking.Manger"]}
+            >
+              <div className="flex justify-end mt-4">
+                <button
+                  className="bg-green-500 text-white p-2 rounded disabled:bg-slate-500"
+                  onClick={() => {
+                    updateManualUpdateCountersAsync(
+                      countersUpdatable
+                        .filter((x) => x.dirty)
+                        .map((u) => ({
+                          ...u.current,
+                          validTill: parseDateTimeLocal(u.current.validTill),
+                        }))
+                    ).then(() => {
+                      setIsDirty(false);
+                      toast.success("Counters updated successfully");
+                      setCountersUpdatable([]);
+                      manualUpdateCountersQuery.refetch();
+                    });
+                  }}
+                  disabled={!isDirty}
+                >
+                  Update
+                </button>
+              </div>
+            </SecureAccess>
           </div>
         )}
       </div>

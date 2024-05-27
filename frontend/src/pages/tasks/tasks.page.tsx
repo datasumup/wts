@@ -12,21 +12,23 @@ export const HomePage: React.FC = ({}: TasksPageProps) => {
   return (
     <div className="h-full w-full flex flex-col items-center p-2">
       <div className="w-full lg:w-1/2 2xl:w-1/3 ">
-        <div className="w-72">
-          <NavLink
-            to={"/home"}
-            className="text-blue-300 flex justify-start items-center underline mb-8 hover:text-green-400 cursor-pointer"
-          >
-            <HomeIcon className="h-6 w-6 mr-2" /> Home
-          </NavLink>
+        <div className="flex flex-col justify-start items-center w-full">
+          <div className="w-full">
+            <NavLink
+              to={"/home"}
+              className="text-blue-300 flex justify-start items-center underline mb-8 hover:text-green-400 cursor-pointer"
+            >
+              <HomeIcon className="h-6 w-6 mr-2" /> Home
+            </NavLink>
+          </div>
+          <div className="w-full text-2xl font-semibold col-span-2 flex justify-start items-center mt-4 mb-2 text-slate-300">
+            <CircleCheckBigIcon className="h-7 w-7 mr-2" /> Windows Task
+            Management
+          </div>
+          {tasks?.map((task) => (
+            <Task task={task} key={task.Id} />
+          ))}
         </div>
-        <div className="text-2xl font-semibold col-span-2 flex justify-start items-center my-4 text-slate-300">
-          <CircleCheckBigIcon className="h-7 w-7 mr-2" /> Windows Task
-          Management
-        </div>
-        {tasks?.map((task) => (
-          <Task task={task} key={task.Id} />
-        ))}
       </div>
     </div>
   );
