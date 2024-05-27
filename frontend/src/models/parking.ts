@@ -19,5 +19,5 @@ export type ManualUpdateCounter = {
   DisplayThreshold: number | null;
   MediumThreshold: number | null;
   HighThreshold: number | null;
-  validTill: Date;
+  validTill: string; // example 2024-05-24T13:27:53.510000
 };

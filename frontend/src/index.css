@@ -5,3 +5,8 @@
 :root {
   @apply antialiased text-gray-900 dark:text-gray-50 bg-gray-100 dark:bg-slate-700;
 }
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(130deg)
+    brightness(95%) contrast(80%);
+}

@@ -10,6 +10,7 @@ import { NavLink } from "react-router-dom";
 export type HomePageProps = {};
 // eslint-disable-next-line no-empty-pattern
 export const HomePage: React.FC = ({}: HomePageProps) => {
+  console.log("HomePage");
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div className="flex justify-center items-center space-x-4">

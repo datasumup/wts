@@ -7,10 +7,12 @@ export type SecureAccessProps = {
 export const SecureAccess = ({ children, roles }: SecureAccessProps) => {
   const [user] = useUser();
 
-  if (!user?.authenticated) {
+  if (!user?.authenticated && !import.meta.env.VITE_AUTH_DISABLED) {
     return null;
   }
-  return roles?.some((role) => user?.roles?.includes(role)) ? (
+
+  return import.meta.env.VITE_AUTH_DISABLED ||
+    roles?.some((role) => user?.roles?.includes(role)) ? (
     <>{children}</>
   ) : null;
 };
