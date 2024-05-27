@@ -24,9 +24,10 @@ type Updatable<T> = {
 };
 
 const toDateTimeLocal = (datetime: string) => {
-  const dt = new Date(datetime);
-  dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
-  return dt.toISOString().slice(0, 16);
+  return datetime?.substring(0, 16);
+  // const dt = new Date(datetime);
+  // dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+  // return dt.toISOString().slice(0, 16);
 };
 const parseDateTimeLocal = (datetimeLocal: string) => {
   return `${datetimeLocal}:00.000`;
